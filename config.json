@@ -1,0 +1,13 @@
+{
+    "allure_results_dir": "allure_results",
+    "allure_reports_dir": "allure_reports",
+    "base_url": "",
+    "browser": "chrome",
+    "browser_version": "107",
+    "environment": "test",
+    "headless_mode": true,
+    "logs_dir": "logs",
+    "python": "3.9.7",
+    "screenshots_dir": "screenshots",
+    "timeout": 20
+}
