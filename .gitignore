@@ -1,3 +1,5 @@
 .idea
 __pycache__
 .pytest_cache
+utils/users.json
+utils/db.json

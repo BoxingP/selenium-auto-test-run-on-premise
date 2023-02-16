@@ -4,6 +4,7 @@ import os
 import pytest
 
 from utils.driver_factory import DriverFactory
+from utils.json_report import JSONReport
 from utils.screenshot import Screenshot
 
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), '..', 'config.json')
@@ -52,3 +53,15 @@ def screenshot_on_failure(request, config):
         current_test = request.node.name.split(':')[-1].split(' ')[0].lower()
         driver = request.cls.driver
         Screenshot.take_screenshot(driver, config, 'test call failed', test=current_test)
+
+
+def pytest_addoption(parser):
+    parser.addoption(
+        '--json', action='store', dest='json_path', default=None, help='where to store the json report'
+    )
+
+
+@pytest.mark.tryfirst
+def pytest_configure(config):
+    json_path = config.option.json_path
+    config.pluginmanager.register(JSONReport(json_path), name='json_report')
