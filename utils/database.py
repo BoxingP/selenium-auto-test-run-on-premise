@@ -6,7 +6,8 @@ from urllib.parse import quote
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
 
-from utils.database_schema import CCPTestResults, CCPLoginAvailability
+from utils.database_schema import CCPTestStatus, CCPTestAvailability, CCPTestSteps
+from utils.steps_log import StepsLog
 
 Session = sessionmaker()
 
@@ -31,24 +32,44 @@ class Database(object):
         return create_engine(db_uri, echo=False)
 
     def insert_status(self, name, status):
-        new_status = CCPTestResults(
+        new_status = CCPTestStatus(
             case_id=name,
             status=status
         )
         self.session.add(new_status)
+        self.session.flush()
         self.session.commit()
+        return new_status.id
+
+    def insert_steps(self, name, status_id, steps):
+        with open(steps) as file:
+            logs = file.read()
+        if logs != '':
+            for line in logs.split('\n'):
+                if line == '':
+                    continue
+                log = StepsLog(line)
+                step = CCPTestSteps(
+                    case_id=name,
+                    steps=log.step,
+                    time=log.log_dt,
+                    duration=log.spent_time,
+                    status_id=status_id
+                )
+                self.session.add(step)
+                self.session.commit()
 
     def insert_availability(self, name):
-        statement = select(CCPTestResults.time, CCPTestResults.status).filter(
-            CCPTestResults.time >= datetime.datetime.utcnow() + datetime.timedelta(hours=-2))
+        statement = select(CCPTestStatus.time, CCPTestStatus.status).filter(
+            CCPTestStatus.time >= datetime.datetime.utcnow() + datetime.timedelta(hours=-2))
         rows = self.session.execute(statement).all()
         total_status = len(rows)
-        statement = select(CCPTestResults.time, CCPTestResults.status).filter(
-            CCPTestResults.time >= datetime.datetime.utcnow() + datetime.timedelta(hours=-2)).filter_by(status=0)
+        statement = select(CCPTestStatus.time, CCPTestStatus.status).filter(
+            CCPTestStatus.time >= datetime.datetime.utcnow() + datetime.timedelta(hours=-2)).filter_by(status=0)
         rows = self.session.execute(statement).all()
         available_status = len(rows)
         availability = round(available_status / total_status * 100)
-        new_availability = CCPLoginAvailability(
+        new_availability = CCPTestAvailability(
             case_id=name,
             availability=availability
         )

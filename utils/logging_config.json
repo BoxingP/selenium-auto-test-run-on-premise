@@ -6,7 +6,7 @@
             "format": "%(asctime)s - %(name)s - %(message)s"
         },
         "extended": {
-            "format": "%(asctime)s - %(levelname)s <PID %(process)d:%(processName)s> %(name)s - %(message)s"
+            "format": "%(asctime)s - %(levelname)s - <PID %(process)d:%(processName)s> - %(name)s - %(message)s"
         }
     },
     "handlers": {
