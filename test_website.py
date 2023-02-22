@@ -43,6 +43,12 @@ def lambda_handler(event, context):
     allure_results_dir = os.path.join(output_dir, config['allure_results_dir'])
     logs_dir = os.path.join(output_dir, config['logs_dir'])
     steps_log_file = os.path.join(logs_dir, 'steps.log')
+    utils_dir = os.path.join(os.path.dirname(__file__), 'utils')
+    with open(os.path.join(utils_dir, 'logging_config_template.json'), 'r', encoding='UTF-8') as file:
+        logging_config = json.load(file)
+    logging_config['handlers']['info_file']['filename'] = steps_log_file
+    with open(os.path.join(utils_dir, 'logging_config.json'), 'w') as file:
+        json.dump(logging_config, file)
     if not os.path.exists(logs_dir):
         os.makedirs(logs_dir)
     json_report_file = os.path.join(output_dir, 'report.json')

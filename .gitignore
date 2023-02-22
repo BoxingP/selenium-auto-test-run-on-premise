@@ -3,3 +3,4 @@ __pycache__
 .pytest_cache
 utils/users.json
 utils/db.json
+utils/logging_config.json
