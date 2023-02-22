@@ -6,7 +6,7 @@ from urllib.parse import quote
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
 
-from utils.database_schema import CCPTestStatus, CCPTestAvailability, CCPTestSteps
+from utils.database_schema import SeleniumTestAvailability, SeleniumTestStatus, SeleniumTestSteps
 from utils.steps_log import StepsLog
 
 Session = sessionmaker()
@@ -32,7 +32,7 @@ class Database(object):
         return create_engine(db_uri, echo=False)
 
     def insert_status(self, name, status):
-        new_status = CCPTestStatus(
+        new_status = SeleniumTestStatus(
             case_id=name,
             status=status
         )
@@ -49,7 +49,7 @@ class Database(object):
                 if line == '':
                     continue
                 log = StepsLog(line)
-                step = CCPTestSteps(
+                step = SeleniumTestSteps(
                     case_id=name,
                     steps=log.step,
                     time=log.log_dt,
@@ -60,16 +60,16 @@ class Database(object):
                 self.session.commit()
 
     def insert_availability(self, name):
-        statement = select(CCPTestStatus.time, CCPTestStatus.status).filter(
-            CCPTestStatus.time >= datetime.datetime.utcnow() + datetime.timedelta(hours=-2))
+        statement = select(SeleniumTestStatus.time, SeleniumTestStatus.status).filter(
+            SeleniumTestStatus.time >= datetime.datetime.utcnow() + datetime.timedelta(hours=-2))
         rows = self.session.execute(statement).all()
         total_status = len(rows)
-        statement = select(CCPTestStatus.time, CCPTestStatus.status).filter(
-            CCPTestStatus.time >= datetime.datetime.utcnow() + datetime.timedelta(hours=-2)).filter_by(status=0)
+        statement = select(SeleniumTestStatus.time, SeleniumTestStatus.status).filter(
+            SeleniumTestStatus.time >= datetime.datetime.utcnow() + datetime.timedelta(hours=-2)).filter_by(status=0)
         rows = self.session.execute(statement).all()
         available_status = len(rows)
         availability = round(available_status / total_status * 100)
-        new_availability = CCPTestAvailability(
+        new_availability = SeleniumTestAvailability(
             case_id=name,
             availability=availability
         )
