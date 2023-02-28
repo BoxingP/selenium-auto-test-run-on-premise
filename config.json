@@ -1,12 +1,18 @@
 {
-    "allure_results_dir": "allure_results",
-    "base_url": "https://apps.thermofisher.com/apps/msd-cp/",
-    "browser": "chrome",
-    "environment": "prod",
-    "headless_mode": true,
-    "output_dir": "tmp",
-    "logs_dir": "logs",
-    "python": "3.9.7",
-    "screenshots_dir": "screenshots",
-    "timeout": 20
+  "allure_results_dir": "allure_results",
+  "base_url": "https://apps.thermofisher.com/apps/msd-cp/",
+  "browser": "chrome",
+  "environment": "prod",
+  "headless_mode": true,
+  "output_dir": "tmp",
+  "logs_dir": "logs",
+  "python": "3.9.7",
+  "screenshots_dir": "screenshots",
+  "timeout": 20,
+  "test_cases": [
+    {
+      "test_name": "test_open_home_page",
+      "case_name": "Customer Portal(CCP)_Login_T_137"
+    }
+  ]
 }

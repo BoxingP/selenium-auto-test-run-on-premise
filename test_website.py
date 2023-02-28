@@ -7,6 +7,13 @@ import pytest
 from utils.database import Database
 
 
+def get_test_case(cases, name):
+    try:
+        return next(case for case in cases if case['test_name'] == name)
+    except StopIteration:
+        print('\n Case %s is not defined, enter a valid case.\n' % name)
+
+
 def empty_directory(directory):
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
@@ -19,7 +26,7 @@ def empty_directory(directory):
             print(f"Failed to delete {file_path}. Reason: {e}")
 
 
-def upload_result_to_db(results_file, logs_file):
+def upload_result_to_db(results_file, logs_file, test_cases):
     results_database = Database()
     with open(results_file, 'r', encoding='UTF-8') as file:
         results = json.load(file)
@@ -29,9 +36,10 @@ def upload_result_to_db(results_file, logs_file):
             status = 0
         else:
             status = 1
-        status_id = results_database.insert_status('ccp_login_test', status)
-        results_database.insert_steps('ccp_login_test', status_id, logs_file)
-        results_database.insert_availability('ccp_login_test')
+        case = get_test_case(test_cases, test['name'].split('::')[-1])
+        status_id = results_database.insert_status(case['case_name'], status)
+        results_database.insert_steps(case['case_name'], status_id, logs_file)
+        results_database.insert_availability(case['case_name'])
 
 
 def lambda_handler(event, context):
@@ -57,7 +65,7 @@ def lambda_handler(event, context):
         [tests_dir, "--dist=loadfile", "--order-dependencies", f"--alluredir={allure_results_dir}", '--cache-clear',
          f"--json={json_report_file}", '-n', '5']
     )
-    upload_result_to_db(json_report_file, steps_log_file)
+    upload_result_to_db(json_report_file, steps_log_file, config['test_cases'])
     empty_directory(directory=logs_dir)
 
 
