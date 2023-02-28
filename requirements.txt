@@ -1,2 +1,9 @@
 selenium~=3.14.0
 pytest~=6.2.5
+allure-pytest~=2.9.45
+psycopg2~=2.9.3
+pytest-rerunfailures~=10.2
+pytest-xdist~=2.5.0
+pytest-dependency~=0.5.1
+pytest-order~=1.0.1
+SQLAlchemy~=1.4.32
