@@ -17,7 +17,7 @@ class DriverFactory(object):
                 options.add_argument('--single-process')
                 options.add_argument('--ignore-certificate-errors')
                 options.add_argument('--disable-dev-shm-usage')
-            driver = webdriver.Chrome(options=options)
+            driver = webdriver.Chrome('/usr/bin/chromedriver', options=options)
 
             return driver
         raise Exception('Provide valid driver name')
