@@ -4,3 +4,4 @@ __pycache__
 utils/users.json
 utils/db.json
 utils/logging_config.json
+utils/emails.json
