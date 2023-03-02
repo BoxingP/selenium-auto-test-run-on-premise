@@ -110,6 +110,8 @@ def lambda_handler(event, context):
         json.dump(logging_config, file)
     if not os.path.exists(logs_dir):
         os.makedirs(logs_dir)
+    if not os.path.exists(screenshots_dir):
+        os.makedirs(screenshots_dir)
     json_report_file = os.path.join(output_dir, 'report.json')
 
     pytest.main(
