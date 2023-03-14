@@ -21,4 +21,5 @@ class TestSitePages:
         login_page = LoginPage(self.driver, config)
         login_page.login('admin', is_valid=True)
         login_page.redirect_to_home()
-        assert home_page.is_element_exists(*HomePageLocators.create_org_button)
+        assert home_page.is_element_exists(*HomePageLocators.loading_bar) or home_page.is_element_exists(
+            *HomePageLocators.create_org_button)

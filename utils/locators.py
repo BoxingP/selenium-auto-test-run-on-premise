@@ -7,6 +7,7 @@ class PageLocators(object):
 
 
 class HomePageLocators(PageLocators):
+    loading_bar = (By.XPATH, '//div[@id="loading-screen"]/div')
     create_org_button = (By.ID, 'create-new')
 
 
