@@ -42,7 +42,7 @@ class Database(object):
         self.session.commit()
         return new_status.id
 
-    def insert_steps(self, name, status_id, steps):
+    def insert_steps(self, case, status_id, steps):
         with open(steps) as file:
             logs = file.read()
         if logs != '':
@@ -50,8 +50,10 @@ class Database(object):
                 if line == '':
                     continue
                 log = StepsLog(line)
+                if case['test_name'].replace('_', ' ') != log.test:
+                    continue
                 step = SeleniumTestSteps(
-                    case_id=name,
+                    case_id=case['case_name'],
                     steps=log.step,
                     time=log.log_dt,
                     duration=log.spent_time,

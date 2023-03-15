@@ -88,7 +88,7 @@ def upload_result_to_db(results_file, logs_file, test_cases):
             status = 1
         case = get_test_case(test_cases, test['name'].split('::')[-1])
         status_id = results_database.insert_status(case['case_name'], status)
-        results_database.insert_steps(case['case_name'], status_id, logs_file)
+        results_database.insert_steps(case, status_id, logs_file)
         results_database.insert_availability(case['case_name'])
 
 
