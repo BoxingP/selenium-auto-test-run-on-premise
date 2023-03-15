@@ -8,6 +8,7 @@ class DriverFactory(object):
         if browser == 'chrome':
             options = webdriver.ChromeOptions()
             options.add_argument('--window-size=1920,1280')
+            options.add_argument('--enable-javascript')
             if headless_mode is True:
                 options.add_argument('--headless')
                 options.add_argument('--disable-infobars')
