@@ -31,7 +31,7 @@ class TestSitePages:
     @allure.description('This is test of open consumable state table')
     def test_open_consumable_state_table(self, config):
         home_page = HomePage(self.driver, config)
-        home_page.open_page()
+        home_page.open_page(wait_element=HomePageLocators.logo_img)
         home_page.search_org('YMTC')
         home_page.open_org_dashboard()
         home_page.open_instrument_group_dashboard()

@@ -34,11 +34,13 @@ class Page(object):
 
     @_step
     @allure.step('Opening the page')
-    def open_page(self, url='', is_overwrite=False):
+    def open_page(self, url='', is_overwrite=False, wait_element=None):
         if is_overwrite:
             self.driver.get(url)
         else:
             self.driver.get(f"{self.config['base_url']}{url}")
+        if wait_element is not None:
+            self.wait_element_to_be_visible(*wait_element)
 
     @allure.step('Getting title of the page')
     def get_title(self):

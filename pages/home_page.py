@@ -1,7 +1,7 @@
 import allure
 
 from pages.page import Page
-from utils.locators import HomePageLocators
+from utils.locators import HomePageLocators, LoginPageLocators
 from utils.logger import _step
 
 
@@ -14,6 +14,7 @@ class HomePage(Page):
     @allure.step('Redirect to login page')
     def redirect_to_login(self):
         self.wait_url_changed_to('signin-identifier.html')
+        self.wait_element_to_be_visible(*LoginPageLocators.username_field)
 
     @_step
     def search_org(self, name):

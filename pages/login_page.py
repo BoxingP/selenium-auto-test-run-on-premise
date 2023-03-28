@@ -1,7 +1,7 @@
 import allure
 
 from pages.page import Page
-from utils.locators import LoginPageLocators
+from utils.locators import LoginPageLocators, HomePageLocators
 from utils.logger import _step
 from utils.users import User
 
@@ -27,3 +27,4 @@ class LoginPage(Page):
     def redirect_to_home(self):
         self.wait_url_changed_to('proxy.html')
         self.wait_url_changed_to('msd-cp')
+        self.wait_element_to_be_visible(*HomePageLocators.logo_img)

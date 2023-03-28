@@ -8,6 +8,7 @@ class PageLocators(object):
 
 class HomePageLocators(PageLocators):
     loading_bar = (By.XPATH, '//div[@id="loading-screen"]/div')
+    logo_img = (By.XPATH, '//img[contains(@class, "logo-img")]')
     create_org_button = (By.ID, 'create-new')
     search_org_field = (
         By.XPATH, '//admin-organization-list-page/div/div[1]/form-search-component/form/nz-input-group/input')
