@@ -1,4 +1,6 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromiumService
+from selenium.webdriver.firefox.service import Service as FirefoxService
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
 
@@ -21,7 +23,7 @@ class DriverFactory(object):
                 options.add_argument('--disable-dev-shm-usage')
                 options.add_argument(
                     '--user-agent=""Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36""')
-            driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+            driver = webdriver.Chrome(service=ChromiumService(ChromeDriverManager().install()), options=options)
             return driver
         elif browser == 'firefox':
             options = webdriver.FirefoxOptions()
@@ -36,7 +38,7 @@ class DriverFactory(object):
                 options.add_argument('--disable-dev-shm-usage')
                 options.add_argument(
                     '--user-agent=""Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0""')
-            driver = webdriver.Firefox(executable_path=GeckoDriverManager().install(), options=options)
+            driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()), options=options)
             return driver
 
         raise Exception('Provide valid driver name')
