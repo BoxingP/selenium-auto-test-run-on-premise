@@ -107,6 +107,14 @@ class Page(object):
             print('\n * ELEMENT NOT VISIBLE WITHIN %s SECONDS! --> %s' % (timeout, locator[1]))
             Screenshot.take_screenshot(self.driver, self.config, f'{locator[1]} not found')
 
+    def wait_element_to_be_invisible(self, *locator):
+        timeout = self.config['timeout']
+        try:
+            WebDriverWait(self.driver, timeout=timeout).until(EC.invisibility_of_element_located(locator))
+        except TimeoutException:
+            print('\n * ELEMENT NOT INVISIBLE WITHIN %s SECONDS! --> %s' % (timeout, locator[1]))
+            Screenshot.take_screenshot(self.driver, self.config, f'{locator[1]} not disappeared')
+
     def wait_text_to_be_display(self, text, *locator):
         timeout = self.config['timeout']
         try:
@@ -131,7 +139,6 @@ class Page(object):
             print('\n * FRAME NOT VISIBLE WITHIN %s SECONDS! --> %s' % (timeout, locator[1]))
             Screenshot.take_screenshot(self.driver, self.config, f'{locator[1]} not found')
 
-    @_step
     @allure.step('Saving the cookie')
     def save_cookie(self, username: str):
         cookie_path = os.path.join(os.path.abspath(os.sep), 'tmp', f'{username}_cookie.pkl')
@@ -141,14 +148,13 @@ class Page(object):
     def is_cookie_expired(self, cookies):
         for cookie in cookies:
             if all(key in cookie for key in ('name', 'expiry')):
-                if cookie['name'] == 'tokenExpiration':
+                if cookie['name'] == 'cip_identifier':
                     if int(cookie['expiry']) <= int(time.time()):
                         return True
                     else:
                         return False
         return True
 
-    @_step
     @allure.step('Loading the cookie')
     def load_cookie(self, username: str):
         try:

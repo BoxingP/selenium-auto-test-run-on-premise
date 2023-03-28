@@ -13,6 +13,10 @@
     {
       "test_name": "test_open_home_page",
       "case_name": "Customer Portal(CCP)_Login_T_137"
+    },
+    {
+      "test_name": "test_open_consumable_state_table",
+      "case_name": "Customer Portal(CCP)_Consumable State Table_T_147"
     }
   ]
 }
