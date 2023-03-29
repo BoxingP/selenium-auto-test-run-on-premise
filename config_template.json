@@ -1,7 +1,7 @@
 {
   "allure_results_dir": "allure_results",
   "base_url": "https://apps.thermofisher.com/apps/msd-cp/",
-  "browser": "edge",
+  "browser": "",
   "environment": "prod",
   "headless_mode": true,
   "output_dir": "tmp",

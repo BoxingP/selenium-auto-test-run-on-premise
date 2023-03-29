@@ -7,6 +7,7 @@ import pytest
 
 from utils.database import Database
 from utils.emails import Emails
+from utils.random import random_sleep, random_browser
 
 
 def get_screenshot_path(test_name, screenshots_dir):
@@ -93,9 +94,13 @@ def upload_result_to_db(results_file, logs_file, test_cases):
 
 
 def lambda_handler(event, context):
+    config_template_path = os.path.join(os.path.dirname(__file__), 'config_template.json')
     config_path = os.path.join(os.path.dirname(__file__), 'config.json')
-    with open(config_path, 'r', encoding='UTF-8') as file:
+    with open(config_template_path, 'r', encoding='UTF-8') as file:
         config = json.load(file)
+    config['browser'] = random_browser()
+    with open(config_path, 'w', encoding='UTF-8') as file:
+        json.dump(config, file)
     tests_dir = os.path.join(os.path.dirname(__file__), 'tests')
     output_dir = os.path.join(os.path.abspath(os.sep), config['output_dir'])
     allure_results_dir = os.path.join(output_dir, config['allure_results_dir'])
@@ -114,6 +119,7 @@ def lambda_handler(event, context):
         os.makedirs(screenshots_dir)
     json_report_file = os.path.join(output_dir, 'report.json')
 
+    random_sleep()
     pytest.main(
         [tests_dir, "--dist=loadfile", "--order-dependencies", f"--alluredir={allure_results_dir}", '--cache-clear',
          f"--json={json_report_file}", '-n', '5']

@@ -5,3 +5,4 @@ utils/users.json
 utils/db.json
 utils/logging_config.json
 utils/emails.json
+config.json
