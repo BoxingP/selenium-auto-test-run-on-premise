@@ -33,7 +33,7 @@ def product():
 @pytest.fixture(scope='class')
 def setup(request, config):
     driver = DriverFactory.get_driver(config['browser'], config['headless_mode'])
-    driver.implicitly_wait(config['timeout'])
+    driver.implicitly_wait(0)
     request.cls.driver = driver
     yield request.cls.driver
     request.cls.driver.quit()
