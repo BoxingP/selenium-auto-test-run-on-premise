@@ -18,7 +18,7 @@ class HomePageLocators(PageLocators):
                          '//admin-organization-list-loadmore/div/nz-list/nz-spin/div/div/div[2]/nz-list-item/admin-organization-card/div')
     dashboard_button = (By.XPATH, '//admin-organization-card/div/div/div/div[1]/button/span[1]')
     instrument_group = (By.XPATH, '//app-dashboard//app-group-list//mat-slider-content/div[2]/div/div/div[1]/div/a')
-    group_consumable_state_table_loading = (By.XPATH, '//app-group-consumable-state/nz-table/nz-spin/div[1]/div/span')
+    group_consumable_state_table_empty_msg = (By.XPATH, '//p[contains(@class, "ant-empty-description")]')
     group_consumable_state_table = (
         By.XPATH, '//app-group-consumable-state/nz-table/nz-spin/div/div/nz-table-inner-default/div')
     aperture_strip_cell = (By.XPATH,

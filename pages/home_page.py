@@ -32,5 +32,5 @@ class HomePage(Page):
     def open_instrument_group_dashboard(self):
         self.click(*self.locator.instrument_group)
         self.wait_url_changed_to('group')
-        self.wait_element_to_be_invisible(*self.locator.group_consumable_state_table_loading)
+        self.wait_element_to_be_invisible(*self.locator.group_consumable_state_table_empty_msg)
         self.wait_element_to_be_visible(*self.locator.group_consumable_state_table)
