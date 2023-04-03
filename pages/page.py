@@ -3,6 +3,7 @@ import pickle
 import time
 
 import allure
+from decouple import config
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
@@ -15,9 +16,9 @@ from utils.screenshot import Screenshot
 
 
 class Page(object):
-    def __init__(self, driver, config):
+    def __init__(self, driver):
         self.driver = driver
-        self.config = config
+        self.timeout = config('TIMEOUT', cast=int)
         self.locator = PageLocators
 
     @allure.step('Finding {locator} on the page')
@@ -38,7 +39,7 @@ class Page(object):
         if is_overwrite:
             self.driver.get(url)
         else:
-            self.driver.get(f"{self.config['base_url']}{url}")
+            self.driver.get(f"{config('BASE_URL')}{url}")
         if wait_element is not None:
             self.wait_element_to_be_visible(*wait_element)
 
@@ -86,60 +87,53 @@ class Page(object):
             html.send_keys(Keys.END)
 
     def wait_element(self, *locator):
-        timeout = self.config['timeout']
         try:
-            WebDriverWait(self.driver, timeout=timeout).until(EC.presence_of_element_located(locator))
+            WebDriverWait(self.driver, timeout=self.timeout).until(EC.presence_of_element_located(locator))
         except TimeoutException:
-            print('\n * ELEMENT NOT FOUND WITHIN %s SECONDS! --> %s' % (timeout, locator[1]))
-            Screenshot.take_screenshot(self.driver, self.config, f'{locator[1]} not found')
+            print(f'\n * ELEMENT NOT FOUND WITHIN {self.timeout} SECONDS! --> {locator[1]}')
+            Screenshot.take_screenshot(self.driver, f'{locator[1]} not found')
 
     def wait_element_to_be_clickable(self, *locator):
-        timeout = self.config['timeout']
         try:
-            WebDriverWait(self.driver, timeout=timeout).until(EC.element_to_be_clickable(locator))
+            WebDriverWait(self.driver, timeout=self.timeout).until(EC.element_to_be_clickable(locator))
         except TimeoutException:
-            print('\n * ELEMENT NOT CLICKABLE WITHIN %s SECONDS! --> %s' % (timeout, locator[1]))
-            Screenshot.take_screenshot(self.driver, self.config, f'{locator[1]} not found')
+            print(f'\n * ELEMENT NOT CLICKABLE WITHIN {self.timeout} SECONDS! --> {locator[1]}')
+            Screenshot.take_screenshot(self.driver, f'{locator[1]} not found')
 
     def wait_element_to_be_visible(self, *locator):
-        timeout = self.config['timeout']
         try:
-            WebDriverWait(self.driver, timeout=timeout).until(EC.visibility_of_element_located(locator))
+            WebDriverWait(self.driver, timeout=self.timeout).until(EC.visibility_of_element_located(locator))
         except TimeoutException:
-            print('\n * ELEMENT NOT VISIBLE WITHIN %s SECONDS! --> %s' % (timeout, locator[1]))
-            Screenshot.take_screenshot(self.driver, self.config, f'{locator[1]} not found')
+            print(f'\n * ELEMENT NOT VISIBLE WITHIN {self.timeout} SECONDS! --> {locator[1]}')
+            Screenshot.take_screenshot(self.driver, f'{locator[1]} not found')
 
     def wait_element_to_be_invisible(self, *locator):
-        timeout = self.config['timeout']
         try:
-            WebDriverWait(self.driver, timeout=timeout).until(EC.invisibility_of_element_located(locator))
+            WebDriverWait(self.driver, timeout=self.timeout).until(EC.invisibility_of_element_located(locator))
         except TimeoutException:
-            print('\n * ELEMENT NOT INVISIBLE WITHIN %s SECONDS! --> %s' % (timeout, locator[1]))
-            Screenshot.take_screenshot(self.driver, self.config, f'{locator[1]} not disappeared')
+            print(f'\n * ELEMENT NOT INVISIBLE WITHIN {self.timeout} SECONDS! --> {locator[1]}')
+            Screenshot.take_screenshot(self.driver, f'{locator[1]} not disappeared')
 
     def wait_text_to_be_display(self, text, *locator):
-        timeout = self.config['timeout']
         try:
-            WebDriverWait(self.driver, timeout=timeout).until(EC.text_to_be_present_in_element(locator, text))
+            WebDriverWait(self.driver, timeout=self.timeout).until(EC.text_to_be_present_in_element(locator, text))
         except TimeoutException:
-            print('\n * %s NOT DISPLAY WITHIN %s SECONDS! --> %s' % (text, timeout, locator[1]))
-            Screenshot.take_screenshot(self.driver, self.config, f'{text} not display')
+            print(f'\n * {text} NOT DISPLAY WITHIN {self.timeout} SECONDS! --> {locator[1]}')
+            Screenshot.take_screenshot(self.driver, f'{text} not display')
 
     def wait_url_changed_to(self, url):
-        timeout = self.config['timeout']
         try:
-            WebDriverWait(self.driver, timeout=timeout).until(EC.url_contains(url))
+            WebDriverWait(self.driver, timeout=self.timeout).until(EC.url_contains(url))
         except TimeoutException:
-            print('\n URL NOT CHANGED TO %s WITHIN %s SECONDS! --> CURRENT URL IS %s' % (url, timeout, self.get_url()))
-            Screenshot.take_screenshot(self.driver, self.config, f'url not changed to {url}')
+            print(f'\n URL NOT CHANGED TO {url} WITHIN {self.timeout} SECONDS! --> CURRENT URL IS {self.get_url()}')
+            Screenshot.take_screenshot(self.driver, f'url not changed to {url}')
 
     def wait_frame_to_be_visible(self, *locator):
-        timeout = self.config['timeout']
         try:
-            WebDriverWait(self.driver, timeout=timeout).until(EC.frame_to_be_available_and_switch_to_it(locator))
+            WebDriverWait(self.driver, timeout=self.timeout).until(EC.frame_to_be_available_and_switch_to_it(locator))
         except TimeoutException:
-            print('\n * FRAME NOT VISIBLE WITHIN %s SECONDS! --> %s' % (timeout, locator[1]))
-            Screenshot.take_screenshot(self.driver, self.config, f'{locator[1]} not found')
+            print(f'\n * FRAME NOT VISIBLE WITHIN {self.timeout} SECONDS! --> {locator[1]}')
+            Screenshot.take_screenshot(self.driver, f'{locator[1]} not found')
 
     @allure.step('Saving the cookie')
     def save_cookie(self, username: str):

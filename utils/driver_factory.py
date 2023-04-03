@@ -13,6 +13,7 @@ class DriverFactory(object):
     def get_driver(browser, headless_mode=False):
         if browser == 'chrome':
             options = webdriver.ChromeOptions()
+            options.add_argument('--window-size=1920,1280')
             options.add_argument('--start-maximized')
             if headless_mode is True:
                 options.add_argument('--headless')
@@ -29,6 +30,7 @@ class DriverFactory(object):
             return driver
         elif browser == 'firefox':
             options = webdriver.FirefoxOptions()
+            options.add_argument('--window-size=1920,1280')
             options.add_argument('--start-maximized')
             if headless_mode is True:
                 options.add_argument('--headless')
@@ -44,6 +46,7 @@ class DriverFactory(object):
             return driver
         elif browser == 'edge':
             options = webdriver.EdgeOptions()
+            options.add_argument('--window-size=1920,1280')
             options.add_argument('--start-maximized')
             if headless_mode is True:
                 options.add_argument('--headless=new')

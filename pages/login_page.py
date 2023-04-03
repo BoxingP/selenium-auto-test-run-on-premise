@@ -7,8 +7,8 @@ from utils.users import User
 
 
 class LoginPage(Page):
-    def __init__(self, driver, config):
-        super(LoginPage, self).__init__(driver, config)
+    def __init__(self, driver):
+        super(LoginPage, self).__init__(driver)
         self.locator = LoginPageLocators
 
     @_step

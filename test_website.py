@@ -2,12 +2,15 @@ import json
 import os
 import re
 import shutil
+import sys
 
 import pytest
+from decouple import config
 
-from utils.database import Database
+from databases.ops_database import OpsDatabase
+from utils.cron_selector import get_test_cases_to_run
 from utils.emails import Emails
-from utils.random import random_sleep, random_browser
+from utils.random_generator import random_browser, random_sleep
 
 
 def get_screenshot_path(test_name, screenshots_dir):
@@ -32,11 +35,11 @@ def get_failed_tests(json_data: json, test_cases, directory: str):
         for stage in test.values():
             if stage['outcome'] in ['passed', 'skipped']:
                 continue
-            stage_outcome.append('%s %s' % (stage['name'], stage['outcome']))
+            stage_outcome.append(f"{stage['name']} {stage['outcome']}")
             detail = ''
             for key in [key for key in list(stage.keys()) if key not in ('name', 'duration', 'outcome')]:
-                detail = detail + '\n    %s' % stage[key]
-            stage_detail.append('\n  %s: %s' % (stage['name'], detail))
+                detail = f'{detail}\n    {stage[key]}'
+            stage_detail.append(f"\n  {stage['name']}: {detail}")
 
         summary = ', '.join(stage_outcome)
         screenshot_path = ''
@@ -62,7 +65,7 @@ def get_test_case(cases, name):
     try:
         return next(case for case in cases if case['test_name'] == name)
     except StopIteration:
-        print('\n Case %s is not defined, enter a valid case.\n' % name)
+        print(f'\n Case {name} is not defined, enter a valid case.\n')
 
 
 def empty_directory(directory):
@@ -78,7 +81,7 @@ def empty_directory(directory):
 
 
 def upload_result_to_db(results_file, logs_file, test_cases):
-    results_database = Database()
+    results_database = OpsDatabase('OPS_ALERT')
     with open(results_file, 'r', encoding='UTF-8') as file:
         results = json.load(file)
     tests_results = results['report']['tests']
@@ -94,40 +97,34 @@ def upload_result_to_db(results_file, logs_file, test_cases):
 
 
 def lambda_handler(event, context):
-    config_template_path = os.path.join(os.path.dirname(__file__), 'config_template.json')
-    config_path = os.path.join(os.path.dirname(__file__), 'config.json')
-    with open(config_template_path, 'r', encoding='UTF-8') as file:
-        config = json.load(file)
-    config['browser'] = random_browser()
-    with open(config_path, 'w', encoding='UTF-8') as file:
-        json.dump(config, file)
-    tests_dir = os.path.join(os.path.dirname(__file__), 'tests')
-    output_dir = os.path.join(os.path.abspath(os.sep), config['output_dir'])
-    allure_results_dir = os.path.join(output_dir, config['allure_results_dir'])
-    logs_dir = os.path.join(output_dir, config['logs_dir'])
-    steps_log_file = os.path.join(logs_dir, 'steps.log')
-    screenshots_dir = os.path.join(output_dir, config['screenshots_dir'])
-    utils_dir = os.path.join(os.path.dirname(__file__), 'utils')
-    with open(os.path.join(utils_dir, 'logging_config_template.json'), 'r', encoding='UTF-8') as file:
-        logging_config = json.load(file)
-    logging_config['handlers']['info_file']['filename'] = steps_log_file
-    with open(os.path.join(utils_dir, 'logging_config.json'), 'w') as file:
-        json.dump(logging_config, file)
-    if not os.path.exists(logs_dir):
-        os.makedirs(logs_dir)
-    if not os.path.exists(screenshots_dir):
-        os.makedirs(screenshots_dir)
-    json_report_file = os.path.join(output_dir, 'report.json')
+    output_root_dir = os.path.join(os.path.abspath(os.sep), config('ROOT_DIR'))
+    allure_results_dir = os.path.join(output_root_dir, config('ALLURE_RESULTS_DIR'))
+    logs_dir = os.path.join(output_root_dir, config('LOGS_DIR'))
+    screenshots_dir = os.path.join(output_root_dir, config('SCREENSHOTS_DIR'))
+    os.environ['SCREENSHOTS_DIR_PATH'] = screenshots_dir
+    for directory in [output_root_dir, allure_results_dir, logs_dir]:
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+    log_file = os.path.join(logs_dir, config('LOG_FILE'))
+    os.environ['LOG_FILE_PATH'] = log_file
+    json_report_file = os.path.join(output_root_dir, config('JSON_REPORT_FILE'))
 
-    random_sleep()
-    pytest.main(
-        [tests_dir, "--dist=loadfile", "--order-dependencies", f"--alluredir={allure_results_dir}", '--cache-clear',
-         f"--json={json_report_file}", '-n', '5']
-    )
-    upload_result_to_db(json_report_file, steps_log_file, config['test_cases'])
-    send_notification(json_report_file, config['test_cases'], screenshots_dir)
-    empty_directory(directory=logs_dir)
-    empty_directory(directory=screenshots_dir)
+    test_cases = config('TEST_CASES', cast=lambda x: json.loads(x))
+    test_cases_to_run = get_test_cases_to_run(test_cases)
+    os.environ['PYTHON_VERSION'] = f"{sys.version_info.major}.{sys.version_info.minor}"
+    print(f"Running tests: {', '.join(test_cases_to_run)}")
+    if test_cases_to_run:
+        os.environ['BROWSER'] = random_browser()
+        random_sleep()
+        pytest.main(
+            [f"{os.path.join(os.path.dirname(__file__), 'tests')}", "--dist=loadfile", "--order-dependencies",
+             f"--alluredir={allure_results_dir}", '--cache-clear',
+             f"--json={json_report_file}", '-n', '5', '-k', ' or '.join(test_cases_to_run)]
+        )
+        upload_result_to_db(json_report_file, log_file, test_cases)
+        send_notification(json_report_file, test_cases, screenshots_dir)
+        empty_directory(directory=logs_dir)
+        empty_directory(directory=screenshots_dir)
 
 
 if __name__ == '__main__':
