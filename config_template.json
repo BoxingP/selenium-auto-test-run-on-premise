@@ -1,7 +1,8 @@
 {
   "allure_results_dir": "allure_results",
-  "base_url": "https://apps.thermofisher.com/apps/msd-cp/",
+  "base_url": "https://www.thermofisher.cn/",
   "browser": "",
+  "cid": "tingyun",
   "environment": "prod",
   "headless_mode": true,
   "output_dir": "tmp",
@@ -11,12 +12,8 @@
   "timeout": 20,
   "test_cases": [
     {
-      "test_name": "test_open_home_page",
-      "case_name": "Customer Portal(CCP)_Login_T_137"
-    },
-    {
-      "test_name": "test_open_consumable_state_table",
-      "case_name": "Customer Portal(CCP)_Consumable State Table_T_147"
+      "test_name": "test_login",
+      "case_name": "TFCOM/CN_Login_T_002"
     }
   ]
 }

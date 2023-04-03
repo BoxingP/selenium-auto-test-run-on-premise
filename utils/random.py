@@ -11,7 +11,7 @@ def random_browser():
 
 def random_sleep():
     start = round(random.random(), 1) * 10
-    stop = random.randint(60, 180)
+    stop = random.randint(60, 120)
     seconds = round(random.uniform(start, stop), 5)
     print(f"Random sleeping {seconds} seconds ...")
     sleep(seconds)
