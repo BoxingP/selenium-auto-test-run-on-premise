@@ -1,35 +1,15 @@
 import datetime
-import json
-import os
-from urllib.parse import quote
 
-from sqlalchemy import create_engine, select
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import select
 
-from utils.database_schema import StatusOfFailure, SeleniumTestSteps, SeleniumTestAvailability
+from databases.database import Database
+from databases.database_schema import StatusOfFailure, SeleniumTestSteps, SeleniumTestAvailability
 from utils.steps_log import StepsLog
 
-Session = sessionmaker()
 
-
-class Database(object):
-    def __init__(self):
-        with open(os.path.join(os.path.dirname(__file__), 'db.json'), 'r', encoding='UTF-8') as file:
-            self.config = json.load(file)
-        engine = self.create_engine()
-        Session.configure(bind=engine)
-        self.session = Session()
-
-    def create_engine(self):
-        db_config = self.config['database']
-        adapter = db_config['adapter']
-        host = db_config['host']
-        port = db_config['port']
-        database = db_config['database']
-        user = db_config['user']
-        password = db_config['password']
-        db_uri = f'{adapter}://{user}:%s@{host}:{port}/{database}' % quote(password)
-        return create_engine(db_uri, echo=False)
+class OpsDatabase(Database):
+    def __init__(self, name):
+        super(OpsDatabase, self).__init__(name)
 
     def insert_status(self, name, status):
         new_status = StatusOfFailure(

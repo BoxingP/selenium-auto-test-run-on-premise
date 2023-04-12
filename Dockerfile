@@ -2,6 +2,12 @@ FROM python:3.8-slim
 RUN apt-get update && apt-get install -y --no-install-recommends cron tzdata lsb-release build-essential wget unzip libdbus-glib-1-2 gpg
 RUN apt-get update && apt-get install -y --no-install-recommends python3-dev python3-virtualenv
 RUN apt-get update && apt-get install -y --no-install-recommends libpq-dev
+RUN apt-get update && apt-get install -y --no-install-recommends libaio1
+WORKDIR /opt/oracle
+RUN wget -q https://download.oracle.com/otn_software/linux/instantclient/instantclient-basiclite-linuxx64.zip \
+    && unzip instantclient-basiclite-linuxx64.zip && rm -f instantclient-basiclite-linuxx64.zip \
+    && cd /opt/oracle/instantclient* && rm -f *jdbc* *occi* *mysql* *README *jar uidrvci genezi adrci \
+    && echo /opt/oracle/instantclient* > /etc/ld.so.conf.d/oracle-instantclient.conf && ldconfig
 WORKDIR /tmp
 RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 RUN apt-get install -y ./google-chrome-stable_current_amd64.deb

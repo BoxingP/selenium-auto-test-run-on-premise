@@ -2,7 +2,8 @@
 __pycache__
 .pytest_cache
 utils/users.json
-utils/db.json
 utils/logging_config.json
 utils/emails.json
 config.json
+databases/db.json
+apis/api.json

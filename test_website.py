@@ -5,7 +5,7 @@ import shutil
 
 import pytest
 
-from utils.database import Database
+from databases.ops_database import OpsDatabase
 from utils.emails import Emails
 from utils.random import random_sleep, random_browser
 
@@ -78,7 +78,7 @@ def empty_directory(directory):
 
 
 def upload_result_to_db(results_file, logs_file, test_cases):
-    results_database = Database()
+    results_database = OpsDatabase('ops_alert')
     with open(results_file, 'r', encoding='UTF-8') as file:
         results = json.load(file)
     tests_results = results['report']['tests']

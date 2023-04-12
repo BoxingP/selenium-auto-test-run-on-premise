@@ -33,3 +33,16 @@ class SeleniumTestAvailability(Base):
     case_id = Column(String, nullable=False)
     time = Column(Time, default=datetime.datetime.utcnow(), nullable=False)
     availability = Column(Integer, nullable=False)
+
+
+class E1OrderHeader(Base):
+    __tablename__ = "F4201"
+    __table_args__ = {"schema": "PRODDTA"}
+    SHDOCO = Column(Integer, primary_key=True, nullable=False)
+    SHDCTO = Column(String, primary_key=True, nullable=False)
+    SHKCOO = Column(String, primary_key=True, nullable=False)
+    SHTKBY = Column(String, nullable=True)
+    SHURCD = Column(String, nullable=True)
+    SHTRDJ = Column(Integer, nullable=True)
+    SHUPMJ = Column(Integer, nullable=True)
+    SHTDAY = Column(Integer, nullable=True)
