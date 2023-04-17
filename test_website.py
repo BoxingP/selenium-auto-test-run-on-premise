@@ -6,6 +6,7 @@ import shutil
 import pytest
 
 from databases.ops_database import OpsDatabase
+from utils.cron_selector import get_test_cases_to_run
 from utils.emails import Emails
 from utils.random import random_sleep, random_browser
 
@@ -119,15 +120,18 @@ def lambda_handler(event, context):
         os.makedirs(screenshots_dir)
     json_report_file = os.path.join(output_dir, 'report.json')
 
-    random_sleep()
-    pytest.main(
-        [tests_dir, "--dist=loadfile", "--order-dependencies", f"--alluredir={allure_results_dir}", '--cache-clear',
-         f"--json={json_report_file}", '-n', '5']
-    )
-    upload_result_to_db(json_report_file, steps_log_file, config['test_cases'])
-    send_notification(json_report_file, config['test_cases'], screenshots_dir)
-    empty_directory(directory=logs_dir)
-    empty_directory(directory=screenshots_dir)
+    test_cases = get_test_cases_to_run(config['test_cases'])
+    print(f"Running tests: {', '.join(test_cases)}")
+    if test_cases:
+        random_sleep()
+        pytest.main(
+            [tests_dir, "--dist=loadfile", "--order-dependencies", f"--alluredir={allure_results_dir}", '--cache-clear',
+             f"--json={json_report_file}", '-n', '5', '-k', ' or '.join(test_cases)]
+        )
+        upload_result_to_db(json_report_file, steps_log_file, config['test_cases'])
+        send_notification(json_report_file, config['test_cases'], screenshots_dir)
+        empty_directory(directory=logs_dir)
+        empty_directory(directory=screenshots_dir)
 
 
 if __name__ == '__main__':
