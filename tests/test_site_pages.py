@@ -8,7 +8,7 @@ from pages.login_page import LoginPage
 from utils.locators import HomePageLocators
 
 
-@pytest.mark.usefixtures('setup', 'website_setup')
+@pytest.mark.usefixtures('setup')
 class TestSitePages:
     reruns = 2
     reruns_delay = 2

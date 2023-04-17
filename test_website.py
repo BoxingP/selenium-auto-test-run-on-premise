@@ -126,7 +126,8 @@ def lambda_handler(event, context):
         random_sleep()
         pytest.main(
             [tests_dir, "--dist=loadfile", "--order-dependencies", f"--alluredir={allure_results_dir}", '--cache-clear',
-             f"--json={json_report_file}", '-n', '5', '-k', ' or '.join(test_cases)]
+             f"--json={json_report_file}", '-n', '5', '-k', ' or '.join(test_cases),
+             f"--config-file={config_path}"]
         )
         upload_result_to_db(json_report_file, steps_log_file, config['test_cases'])
         send_notification(json_report_file, config['test_cases'], screenshots_dir)
