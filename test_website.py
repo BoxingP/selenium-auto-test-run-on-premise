@@ -8,7 +8,7 @@ import pytest
 from databases.ops_database import OpsDatabase
 from utils.cron_selector import get_test_cases_to_run
 from utils.emails import Emails
-from utils.random import random_sleep, random_browser
+from utils.random_generator import random_browser, random_sleep
 
 
 def get_screenshot_path(test_name, screenshots_dir):
