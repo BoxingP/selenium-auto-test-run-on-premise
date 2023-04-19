@@ -6,6 +6,8 @@ import os
 import time
 from functools import wraps
 
+from decouple import config
+
 
 class Logger(object):
     def __init__(self, name, default_path=os.path.join(os.path.dirname(__file__), 'logging_config.json'),
@@ -13,12 +15,13 @@ class Logger(object):
         self.path = default_path
         self.level = default_level
         with open(self.path, 'r', encoding='UTF-8') as file:
-            config = json.load(file)
-        self.logger = self.get_logger(name, config)
+            logging_config = json.load(file)
+        logging_config["handlers"]["info_file"]["filename"] = config('LOG_FILE_PATH')
+        self.logger = self.get_logger(name, logging_config)
         return
 
-    def get_logger(self, name, config):
-        logging.config.dictConfig(config)
+    def get_logger(self, name, logging_config):
+        logging.config.dictConfig(logging_config)
         logging.Formatter.converter = time.gmtime
         logger = logging.getLogger(name)
         logger.setLevel(self.level)

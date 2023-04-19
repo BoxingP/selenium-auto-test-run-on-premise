@@ -1,12 +1,11 @@
 import json
-import os
+
+from decouple import config
 
 
 class User(object):
     def __init__(self):
-        path = os.path.dirname(os.path.abspath(__file__))
-        with open(os.path.join(path, 'users.json'), 'r', encoding='UTF-8') as file:
-            self.users = json.load(file)
+        self.users = config('USERS', cast=lambda x: json.loads(x))
 
     def get_user(self, name):
         try:

@@ -11,3 +11,4 @@ webdriver-manager~=3.8.5
 cx-Oracle~=8.3.0
 APScheduler~=3.10.1
 pytz~=2023.3
+python-decouple~=3.8

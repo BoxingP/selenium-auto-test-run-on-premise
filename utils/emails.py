@@ -1,24 +1,20 @@
-import json
-import os
-
 import smtplib
 from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+from decouple import config
+
 
 class Emails(object):
     def __init__(self):
-        path = os.path.dirname(os.path.abspath(__file__))
-        with open(os.path.join(path, 'emails.json'), 'r', encoding='UTF-8') as file:
-            self.emails = json.load(file)
-        self.smtp_server = self.emails['smtp_server']
-        self.port = self.emails['port']
-        self.sender_email = self.emails['sender_email']
-        self.receiver_email = self.emails['receiver_email']
-        self.subject = self.emails['subject']
-        self.text = self.emails['text']
+        self.smtp_server = config('SMTP_SERVER')
+        self.port = config('SMTP_PORT', cast=int)
+        self.sender_email = config('SENDER_EMAIL')
+        self.receiver_email = config('RECEIVER_EMAIL', cast=lambda x: x.split(','))
+        self.subject = config('EMAIL_SUBJECT')
+        self.text = config('EMAIL_TEXT').encode().decode('unicode_escape')
 
     def send_email(self, tests):
         message = MIMEMultipart()

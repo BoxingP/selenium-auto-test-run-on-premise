@@ -1,21 +1,14 @@
-import json
-
 import pytest
+from decouple import config
 
 from utils.driver_factory import DriverFactory
 from utils.json_report import JSONReport
 from utils.screenshot import Screenshot
 
 
-@pytest.fixture(scope='session')
-def config(request):
-    with open(request.config.getoption('--config-file'), 'r', encoding='UTF-8') as file:
-        return json.load(file)
-
-
 @pytest.fixture(scope='class')
-def setup(request, config):
-    driver = DriverFactory.get_driver(config['browser'], config['headless_mode'])
+def setup(request):
+    driver = DriverFactory.get_driver(config('BROWSER'), config('HEADLESS_MODE', cast=bool))
     driver.implicitly_wait(0)
     request.cls.driver = driver
     yield request.cls.driver
@@ -30,20 +23,17 @@ def pytest_runtest_makereport(item):
 
 
 @pytest.fixture(scope='function', autouse=True)
-def screenshot_on_failure(request, config):
+def screenshot_on_failure(request):
     yield
     if request.node.rep_setup.passed and request.node.rep_call.failed:
         current_test = request.node.name.split(':')[-1].split(' ')[0].lower()
         driver = request.cls.driver
-        Screenshot.take_screenshot(driver, config, 'test call failed', test=current_test)
+        Screenshot.take_screenshot(driver, 'test call failed', test=current_test)
 
 
 def pytest_addoption(parser):
     parser.addoption(
         '--json', action='store', dest='json_path', default=None, help='where to store the json report'
-    )
-    parser.addoption(
-        '--config-file', action='store', default=None, help='the config file path'
     )
 
 

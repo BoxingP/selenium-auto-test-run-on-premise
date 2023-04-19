@@ -1,25 +1,19 @@
-import os
-import urllib.request
 import json
+import urllib.request
 
 
 class API(object):
-    def __init__(self, name):
-        self.config = None
-        self.load_config(name)
+    def __init__(self):
+        self.headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebkit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.54",
+            "Accept": "application/json"
+        }
 
-    def load_config(self, name):
+    def send_request(self, url, headers=None):
+        if headers is not None:
+            self.headers.update(headers)
         try:
-            with open(os.path.join(os.path.dirname(__file__), 'api.json'), 'r', encoding='UTF-8') as file:
-                config = json.load(file)
-            self.config = [db for db in config if db['name'] == name][0]
-        except IndexError as error:
-            print(f"Cannot load related {name} API config: {error}.")
-            self.config = None
-
-    def send_request(self, url, headers):
-        try:
-            req = urllib.request.Request(url=url, headers=headers)
+            req = urllib.request.Request(url=url, headers=self.headers)
             resp = urllib.request.urlopen(req)
             resp = resp.read().decode()
             if resp != '':

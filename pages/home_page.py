@@ -6,8 +6,8 @@ from utils.logger import _step
 
 
 class HomePage(Page):
-    def __init__(self, driver, config):
-        super(HomePage, self).__init__(driver, config)
+    def __init__(self, driver):
+        super(HomePage, self).__init__(driver)
         self.locator = HomePageLocators
 
     @_step
