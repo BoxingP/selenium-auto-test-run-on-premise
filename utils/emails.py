@@ -39,10 +39,10 @@ class Emails(object):
 
             sentence = ''
             if len(tests) != 1:
-                sentence = str(index) + '\n'
+                sentence = f'{str(index)}\n'
             for key, value in test.items():
-                sentence = sentence + '%s: %s\n' % (key.upper(), value)
-            content = content + '\n%s' % sentence
+                sentence = f'{sentence}{key.upper()}: {value}\n'
+            content = f'{content}\n{sentence}'
             index += 1
 
         part = MIMEText(f"Failed tests:\n{content}\n", "plain")

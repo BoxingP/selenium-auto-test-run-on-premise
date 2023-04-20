@@ -35,11 +35,11 @@ def get_failed_tests(json_data: json, test_cases, directory: str):
         for stage in test.values():
             if stage['outcome'] in ['passed', 'skipped']:
                 continue
-            stage_outcome.append('%s %s' % (stage['name'], stage['outcome']))
+            stage_outcome.append(f"{stage['name']} {stage['outcome']}")
             detail = ''
             for key in [key for key in list(stage.keys()) if key not in ('name', 'duration', 'outcome')]:
-                detail = detail + '\n    %s' % stage[key]
-            stage_detail.append('\n  %s: %s' % (stage['name'], detail))
+                detail = f'{detail}\n    {stage[key]}'
+            stage_detail.append(f"\n  {stage['name']}: {detail}")
 
         summary = ', '.join(stage_outcome)
         screenshot_path = ''
@@ -65,7 +65,7 @@ def get_test_case(cases, name):
     try:
         return next(case for case in cases if case['test_name'] == name)
     except StopIteration:
-        print('\n Case %s is not defined, enter a valid case.\n' % name)
+        print(f'\n Case {name} is not defined, enter a valid case.\n')
 
 
 def empty_directory(directory):
