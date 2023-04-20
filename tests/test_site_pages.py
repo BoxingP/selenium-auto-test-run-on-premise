@@ -14,6 +14,7 @@ class TestSitePages:
     reruns = config('RERUNS', cast=int)
     reruns_delay = config('RERUNS_DELAY', cast=int)
 
+    @pytest.mark.usefixtures('screenshot_on_failure')
     @pytest.mark.flaky(reruns=reruns, reruns_delay=reruns_delay)
     @allure.title('Login test')
     @allure.description('This is test of login')

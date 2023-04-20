@@ -22,7 +22,7 @@ def pytest_runtest_makereport(item):
     setattr(item, f'rep_{rep.when}', rep)
 
 
-@pytest.fixture(scope='function', autouse=True)
+@pytest.fixture(scope='function')
 def screenshot_on_failure(request):
     yield
     if request.node.rep_setup.passed and request.node.rep_call.failed:

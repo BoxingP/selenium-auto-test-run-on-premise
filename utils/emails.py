@@ -26,16 +26,17 @@ class Emails(object):
         content = ''
         index = 1
         for test in tests:
-            filename = f"{test['name']}.png"
-            with open(test['screenshot'], "rb") as attachment:
-                part = MIMEBase("application", "octet-stream")
-                part.set_payload(attachment.read())
-            encoders.encode_base64(part)
-            part.add_header(
-                "Content-Disposition",
-                f"attachment; filename= {filename}",
-            )
-            message.attach(part)
+            if test['screenshot'] != '':
+                filename = f"{test['name']}.png"
+                with open(test['screenshot'], "rb") as attachment:
+                    part = MIMEBase("application", "octet-stream")
+                    part.set_payload(attachment.read())
+                encoders.encode_base64(part)
+                part.add_header(
+                    "Content-Disposition",
+                    f"attachment; filename= {filename}",
+                )
+                message.attach(part)
 
             sentence = ''
             if len(tests) != 1:
