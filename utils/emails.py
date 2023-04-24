@@ -20,17 +20,21 @@ class Emails(object):
             self.logo_img = file.read()
         with open(os.path.join(os.path.dirname(__file__), config('EMAIL_HTML_FILE')), 'r', encoding='UTF-8') as file:
             self.html = file.read().replace('${PROJECT_NAME}', config('PROJECT_NAME'))
+        self.text = config('EMAIL_PLAIN_TEXT').replace('${PROJECT_NAME}', config('PROJECT_NAME'))
 
     def send_email(self, tests):
-        message = MIMEMultipart()
+        message = MIMEMultipart("alternative")
         message["Subject"] = self.subject
         message["From"] = self.sender_email
         message["To"] = ",".join(self.receiver_email)
-        html_part = MIMEText(self.html, "html")
-        message.attach(html_part)
+        plain_part = MIMEText(self.text, "plain")
+        message.attach(plain_part)
+        html_part = MIMEMultipart("related")
+        html_part.attach(MIMEText(self.html, "html"))
         logo_image = MIMEImage(self.logo_img)
         logo_image.add_header('Content-ID', '<logo>')
-        message.attach(logo_image)
+        html_part.attach(logo_image)
+        message.attach(html_part)
 
         content = ''
         index = 1
