@@ -114,7 +114,7 @@ def lambda_handler(event, context):
     os.environ['PYTHON_VERSION'] = f"{sys.version_info.major}.{sys.version_info.minor}"
     print(f"Running tests: {', '.join(test_cases_to_run)}")
     if test_cases_to_run:
-        os.environ['BROWSER'] = random_browser()
+        random_browser()
         random_sleep()
         pytest.main(
             [f"{os.path.join(os.path.dirname(__file__), 'tests')}", "--dist=loadfile", "--order-dependencies",
