@@ -20,3 +20,12 @@ class LoginPageLocators(PageLocators):
     password_field = (By.ID, 'password-field')
     sign_in_button = (By.ID, 'signin-button')
     login_error_notice = (By.XPATH, '//div[@id="login-error-text"]//span[@class="error-label"]')
+
+
+class RequestQuotePageLocators(PageLocators):
+    inquiry_title = (By.XPATH, '//div[@class="page-header"]/h1')
+    loading_circle = (By.ID, 'formIncludeLoading')
+    request_quote_iframe = (By.ID, 'forminclude')
+    comments_input_box = (By.ID, 'contact-us-data-esb_message')
+    submit_button = (By.XPATH, '//div[@class="submit section"]/div[4]/div[2]/input')
+    informed_msg = (By.ID, 'tfCustomerInformationDTO.emailOptIn_rightcol')

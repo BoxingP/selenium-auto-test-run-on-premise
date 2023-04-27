@@ -15,7 +15,9 @@ from utils.random_generator import random_browser, random_sleep
 
 def get_screenshot_path(test_name, screenshots_dir):
     screenshots = os.listdir(screenshots_dir)
-    related_screenshots = [file for file in screenshots if re.match(f"{test_name}.*", file)]
+    test_name = test_name.replace('[', '\\[').replace(']', '\\]')
+    pattern = re.compile(test_name, re.IGNORECASE)
+    related_screenshots = [file for file in screenshots if pattern.search(file)]
     if related_screenshots:
         related_screenshots.sort(key=lambda f: int(re.sub('[^0-9]', '', f)))
         return os.path.join(screenshots_dir, related_screenshots[-1])
@@ -27,7 +29,7 @@ def get_failed_tests(json_data: json, test_cases, directory: str):
     for test in json_data['report']['tests']:
         if test['outcome'] in ['passed', 'skipped']:
             continue
-        name = '::'.join(test['name'].split('::')[-2:])
+        name = test['name'].split("::")[-1]
         stage_outcome = []
         stage_detail = []
         for key in ('name', 'duration', 'run_index', 'outcome'):
@@ -44,9 +46,9 @@ def get_failed_tests(json_data: json, test_cases, directory: str):
         summary = ', '.join(stage_outcome)
         screenshot_path = ''
         if 'call' in summary:
-            screenshot_path = get_screenshot_path(test_name=name.split('::')[1], screenshots_dir=directory)
+            screenshot_path = get_screenshot_path(test_name=name, screenshots_dir=directory)
         detail = '  '.join(stage_detail)
-        case = get_test_case(test_cases, name.split('::')[1])
+        case = get_test_case(test_cases, name.split("[")[0])
         failed_tests.append(
             {'name': case['case_name'], 'reason': summary, 'screenshot': screenshot_path, 'error': detail})
 
@@ -90,7 +92,7 @@ def upload_result_to_db(results_file, logs_file, test_cases):
             status = 0
         else:
             status = 1
-        case = get_test_case(test_cases, test['name'].split('::')[-1])
+        case = get_test_case(test_cases, test['name'].split('::')[-1].split("[")[0])
         status_id = results_database.insert_status(case['case_name'], status)
         results_database.insert_steps(case, status_id, logs_file)
         results_database.insert_availability(case['case_name'])

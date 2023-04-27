@@ -6,7 +6,8 @@ from apis.tf_api import TfAPI
 from databases.e1_database import E1Database
 from pages.home_page import HomePage
 from pages.login_page import LoginPage
-from utils.locators import HomePageLocators
+from pages.request_quote_page import RequestQuotePage
+from utils.locators import HomePageLocators, RequestQuotePageLocators
 
 
 @pytest.mark.usefixtures('setup')
@@ -42,3 +43,18 @@ class TestSitePages:
                 assert e1_order == int(csr_order_details['salesOrderNumber'])
             else:
                 assert False
+
+    @pytest.mark.parametrize('value', config('SKUS', cast=lambda v: v.split(',')))
+    @pytest.mark.usefixtures('screenshot_on_failure')
+    @pytest.mark.flaky(reruns=reruns, reruns_delay=reruns_delay)
+    @allure.title('Check request quote page opens normally test')
+    @allure.description('This is test to check request quote page opens normally')
+    def test_request_quote_page(self, value):
+        request_quote_page = RequestQuotePage(self.driver)
+        request_quote_page.open_page(
+            url=f"cn/zh/home/technical-resources/request-a-quote.{value}.html??cid={config('CID')}",
+            wait_element=RequestQuotePageLocators.inquiry_title
+        )
+        request_quote_page.wait_request_form_visible()
+        informed_msg = '我希望收到'
+        assert informed_msg in request_quote_page.find_element(*RequestQuotePageLocators.informed_msg).text

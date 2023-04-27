@@ -1,4 +1,5 @@
 import os
+import re
 import smtplib
 from email import encoders
 from email.mime.base import MIMEBase
@@ -40,11 +41,15 @@ class Emails(object):
         index = 1
         for test in tests:
             if test['screenshot'] != '':
-                filename = f"{test['name']}.png"
                 with open(test['screenshot'], "rb") as attachment:
                     screenshot = MIMEBase("application", "octet-stream")
                     screenshot.set_payload(attachment.read())
                 encoders.encode_base64(screenshot)
+                match = re.search(r'\[(.*?)]', test['screenshot'])
+                if match:
+                    filename = f"{test['name']}{match.group(0)}.png"
+                else:
+                    filename = f"{test['name']}.png"
                 screenshot.add_header(
                     "Content-Disposition",
                     f"attachment; filename= {filename}",
