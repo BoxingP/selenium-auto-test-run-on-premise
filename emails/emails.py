@@ -7,21 +7,22 @@ from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from decouple import config
+from decouple import config as decouple_config
 
 
 class Emails(object):
     def __init__(self):
-        self.smtp_server = config('SMTP_SERVER')
-        self.port = config('SMTP_PORT', cast=int)
-        self.sender_email = config('SENDER_EMAIL')
-        self.receiver_email = config('RECEIVER_EMAIL', cast=lambda x: x.split(','))
-        self.subject = config('EMAIL_SUBJECT').replace('${PROJECT_NAME}', config('PROJECT_NAME'))
-        with open(os.path.join(os.path.dirname(__file__), config('EMAIL_LOGO_FILE')), 'rb') as file:
+        self.smtp_server = decouple_config('SMTP_SERVER')
+        self.port = decouple_config('SMTP_PORT', cast=int)
+        self.sender_email = decouple_config('SENDER_EMAIL')
+        self.receiver_email = decouple_config('RECEIVER_EMAIL', cast=lambda x: x.split(','))
+        self.subject = decouple_config('EMAIL_SUBJECT').replace('${PROJECT_NAME}', decouple_config('PROJECT_NAME'))
+        with open(os.path.join(os.path.dirname(__file__), decouple_config('EMAIL_LOGO_FILE')), 'rb') as file:
             self.logo_img = file.read()
-        with open(os.path.join(os.path.dirname(__file__), config('EMAIL_HTML_FILE')), 'r', encoding='UTF-8') as file:
-            self.html = file.read().replace('${PROJECT_NAME}', config('PROJECT_NAME'))
-        self.text = config('EMAIL_PLAIN_TEXT').replace('${PROJECT_NAME}', config('PROJECT_NAME'))
+        with open(os.path.join(os.path.dirname(__file__), decouple_config('EMAIL_HTML_FILE')), 'r',
+                  encoding='UTF-8') as file:
+            self.html = file.read().replace('${PROJECT_NAME}', decouple_config('PROJECT_NAME'))
+        self.text = decouple_config('EMAIL_PLAIN_TEXT').replace('${PROJECT_NAME}', decouple_config('PROJECT_NAME'))
 
     def send_email(self, tests):
         message = MIMEMultipart("alternative")

@@ -1,7 +1,7 @@
 import allure
 
+from pages.locators import HomePageLocators, LoginPageLocators
 from pages.page import Page
-from utils.locators import HomePageLocators, LoginPageLocators
 from utils.logger import _step
 
 

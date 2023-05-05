@@ -2,11 +2,11 @@ import os
 import random
 from time import sleep
 
-from decouple import config
+from decouple import config as decouple_config
 
 
 def random_browser():
-    browser_list = config('BROWSER', cast=lambda x: x.split(','))
+    browser_list = decouple_config('BROWSER', cast=lambda x: x.split(','))
     selected_browser = random.choice(browser_list)
     print(f"Using {selected_browser} to do the test.")
     os.environ['BROWSER'] = selected_browser
@@ -14,7 +14,7 @@ def random_browser():
 
 def random_sleep():
     start = round(random.random(), 1) * 10
-    range_values = tuple(map(int, config('SLEEP_TIME_UPPER_LIMIT_RANGE').strip('()').split(',')))
+    range_values = tuple(map(int, decouple_config('SLEEP_TIME_UPPER_LIMIT_RANGE').strip('()').split(',')))
     stop = random.randint(*range_values)
     seconds = round(random.uniform(start, stop), 5)
     print(f"Random sleeping {seconds} seconds ...")

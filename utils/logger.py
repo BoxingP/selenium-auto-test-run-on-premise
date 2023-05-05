@@ -6,7 +6,7 @@ import os
 import time
 from functools import wraps
 
-from decouple import config
+from utils.config import config
 
 
 class Logger(object):
@@ -16,7 +16,7 @@ class Logger(object):
         self.level = default_level
         with open(self.path, 'r', encoding='UTF-8') as file:
             logging_config = json.load(file)
-        logging_config["handlers"]["info_file"]["filename"] = config('LOG_FILE_PATH')
+        logging_config["handlers"]["info_file"]["filename"] = config.LOG_FILE
         self.logger = self.get_logger(name, logging_config)
         return
 

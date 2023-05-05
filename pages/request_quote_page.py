@@ -1,7 +1,7 @@
 import allure
 
+from pages.locators import RequestQuotePageLocators
 from pages.page import Page
-from utils.locators import RequestQuotePageLocators
 from utils.logger import _step
 
 
