@@ -8,57 +8,57 @@ from webdriver_manager.microsoft import EdgeChromiumDriverManager
 
 
 class DriverFactory(object):
+    CHROME_OPTIONS = [
+        '--user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"'
+    ]
+    FIREFOX_OPTIONS = [
+        '--user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0"'
+    ]
+    EDGE_OPTIONS = [
+        '--user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.54"'
+    ]
+    COMMON_OPTIONS = [
+        '--window-size=1920,1280',
+        '--start-maximized'
+    ]
+    HEADLESS_OPTIONS = [
+        '--headless',
+        '--no-sandbox',
+        '--disable-gpu',
+        '--hide-scrollbars',
+        '--single-process',
+        '--disable-dev-shm-usage'
+    ]
 
     @staticmethod
     def get_driver(browser, headless_mode=False):
+        options = None
         if browser == 'chrome':
             options = webdriver.ChromeOptions()
-            options.add_argument('--window-size=1920,1280')
-            options.add_argument('--start-maximized')
-            if headless_mode is True:
-                options.add_argument('--headless')
-                options.add_argument('--disable-infobars')
-                options.add_argument('--no-sandbox')
-                options.add_argument('--disable-gpu')
-                options.add_argument('--hide-scrollbars')
-                options.add_argument('--single-process')
-                options.add_argument('--ignore-certificate-errors')
-                options.add_argument('--disable-dev-shm-usage')
-                options.add_argument(
-                    '--user-agent=""Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36""')
-            driver = webdriver.Chrome(service=ChromiumService(ChromeDriverManager().install()), options=options)
-            return driver
+            for option in DriverFactory.CHROME_OPTIONS:
+                options.add_argument(option)
         elif browser == 'firefox':
             options = webdriver.FirefoxOptions()
-            options.add_argument('--window-size=1920,1280')
-            options.add_argument('--start-maximized')
-            if headless_mode is True:
-                options.add_argument('--headless')
-                options.add_argument('--no-sandbox')
-                options.add_argument('--disable-gpu')
-                options.add_argument('--ignore-certificate-errors')
-                options.add_argument('--allow-running-insecure-content')
-                options.add_argument('--disable-extensions')
-                options.add_argument('--disable-dev-shm-usage')
-                options.add_argument(
-                    '--user-agent=""Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0""')
-            driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()), options=options)
-            return driver
+            for option in DriverFactory.FIREFOX_OPTIONS:
+                options.add_argument(option)
         elif browser == 'edge':
             options = webdriver.EdgeOptions()
-            options.add_argument('--window-size=1920,1280')
-            options.add_argument('--start-maximized')
-            if headless_mode is True:
-                options.add_argument('--headless=new')
-                options.add_argument('--no-sandbox')
-                options.add_argument('--disable-gpu')
-                options.add_argument('--ignore-certificate-errors')
-                options.add_argument('--allow-running-insecure-content')
-                options.add_argument('--disable-extensions')
-                options.add_argument('--disable-dev-shm-usage')
-                options.add_argument(
-                    '--user-agent=""Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.54""')
-            driver = webdriver.Edge(service=EdgeService(EdgeChromiumDriverManager().install()), options=options)
-            return driver
+            for option in DriverFactory.EDGE_OPTIONS:
+                options.add_argument(option)
+        for option in DriverFactory.COMMON_OPTIONS:
+            options.add_argument(option)
+        if headless_mode:
+            for option in DriverFactory.HEADLESS_OPTIONS:
+                options.add_argument(option)
 
-        raise Exception('Provide valid driver name')
+        driver = None
+        if browser == 'chrome':
+            driver = webdriver.Chrome(service=ChromiumService(ChromeDriverManager().install()), options=options)
+        elif browser == 'firefox':
+            driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()), options=options)
+        elif browser == 'edge':
+            driver = webdriver.Edge(service=EdgeService(EdgeChromiumDriverManager().install()), options=options)
+
+        if driver is None:
+            raise Exception('Provide valid driver name')
+        return driver
