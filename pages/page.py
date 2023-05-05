@@ -3,14 +3,14 @@ import pickle
 import time
 
 import allure
-from decouple import config
+from decouple import config as decouple_config
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
-from utils.locators import PageLocators
+from pages.locators import PageLocators
 from utils.logger import _step
 from utils.screenshot import Screenshot
 
@@ -18,7 +18,7 @@ from utils.screenshot import Screenshot
 class Page(object):
     def __init__(self, driver):
         self.driver = driver
-        self.timeout = config('TIMEOUT', cast=int)
+        self.timeout = decouple_config('TIMEOUT', cast=int)
         self.locator = PageLocators
 
     @allure.step('Finding {locator} on the page')
@@ -39,7 +39,7 @@ class Page(object):
         if is_overwrite:
             self.driver.get(url)
         else:
-            self.driver.get(f"{config('BASE_URL')}{url}")
+            self.driver.get(f"{decouple_config('BASE_URL')}{url}")
         if wait_element is not None:
             self.wait_element_to_be_visible(*wait_element)
 

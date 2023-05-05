@@ -1,16 +1,16 @@
 import allure
 import pytest
-from decouple import config
+from decouple import config as decouple_config
 
 from pages.home_page import HomePage
+from pages.locators import HomePageLocators
 from pages.login_page import LoginPage
-from utils.locators import HomePageLocators
 
 
 @pytest.mark.usefixtures('setup')
 class TestSitePages:
-    reruns = config('RERUNS', cast=int)
-    reruns_delay = config('RERUNS_DELAY', cast=int)
+    reruns = decouple_config('RERUNS', cast=int)
+    reruns_delay = decouple_config('RERUNS_DELAY', cast=int)
 
     @pytest.mark.usefixtures('screenshot_on_failure')
     @pytest.mark.dependency(name="login", scope="session")

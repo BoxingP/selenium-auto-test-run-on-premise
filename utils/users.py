@@ -1,11 +1,11 @@
 import json
 
-from decouple import config
+from decouple import config as decouple_config
 
 
 class User(object):
     def __init__(self):
-        self.users = config('USERS', cast=lambda x: json.loads(x))
+        self.users = decouple_config('USERS', cast=lambda x: json.loads(x))
 
     def get_user(self, name):
         try:

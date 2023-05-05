@@ -1,5 +1,5 @@
 import pytest
-from decouple import config
+from decouple import config as decouple_config
 
 from utils.driver_factory import DriverFactory
 from utils.json_report import JSONReport
@@ -8,7 +8,7 @@ from utils.screenshot import Screenshot
 
 @pytest.fixture(scope='class')
 def setup(request):
-    driver = DriverFactory.get_driver(config('BROWSER'), config('HEADLESS_MODE', cast=bool))
+    driver = DriverFactory.get_driver(decouple_config('BROWSER'), decouple_config('HEADLESS_MODE', cast=bool))
     driver.implicitly_wait(0)
     request.cls.driver = driver
     yield request.cls.driver
