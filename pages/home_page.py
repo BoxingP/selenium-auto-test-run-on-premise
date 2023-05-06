@@ -18,3 +18,15 @@ class HomePage(Page):
         self.wait_url_changed_to('proxy.html')
         self.wait_url_changed_to('signin-identifier.html')
         self.wait_element_to_be_visible(*LoginPageLocators.username_field)
+
+    @_step
+    @allure.step('Check if user already logged in')
+    def is_user_logged_in(self):
+        return self.is_element_exists(*self.locator.logged_in_menu)
+
+    @_step
+    @allure.step('Logout')
+    def logout(self):
+        self.click(*self.locator.logged_in_menu)
+        self.click(*self.locator.sign_out_link)
+        self.wait_element_to_be_visible(*self.locator.logo_img)

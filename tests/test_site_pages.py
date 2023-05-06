@@ -22,13 +22,14 @@ class TestSitePages:
     def test_login(self):
         home_page = HomePage(self.driver)
         home_page.open_page(url=f"cn/zh/home.html?cid={decouple_config('CID')}", wait_element=HomePageLocators.logo_img)
-        home_page.go_to_login_page()
-        login_page = LoginPage(self.driver)
-        login_page.login('general', is_valid=True)
-        login_page.redirect_to_home()
+        if not home_page.is_user_logged_in():
+            home_page.go_to_login_page()
+            login_page = LoginPage(self.driver)
+            login_page.login('general', is_valid=True)
+            login_page.redirect_to_home()
         profile_msg = '账户'
-        assert profile_msg in login_page.find_element(*HomePageLocators.logged_in_menu).text
-        login_page.logout()
+        assert profile_msg in home_page.find_element(*HomePageLocators.logged_in_menu).text
+        home_page.logout()
 
     @pytest.mark.flaky(reruns=reruns, reruns_delay=reruns_delay)
     @allure.title('Check placed order appears in history test')
