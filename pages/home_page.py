@@ -1,4 +1,7 @@
 import allure
+from selenium.common import TimeoutException
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
 
 from pages.locators import HomePageLocators, LoginPageLocators
 from pages.page import Page
@@ -9,6 +12,15 @@ class HomePage(Page):
     def __init__(self, driver):
         super(HomePage, self).__init__(driver)
         self.locator = HomePageLocators
+
+    @_step
+    @allure.step('Check if user already logged in')
+    def is_user_logged_in(self):
+        try:
+            WebDriverWait(self.driver, timeout=self.timeout).until(EC.url_contains('admin'))
+            return True
+        except TimeoutException:
+            return False
 
     @_step
     @allure.step('Redirect to login page')

@@ -20,10 +20,11 @@ class TestSitePages:
     def test_open_home_page(self):
         home_page = HomePage(self.driver)
         home_page.open_page()
-        home_page.redirect_to_login()
-        login_page = LoginPage(self.driver)
-        login_page.login('admin', is_valid=True)
-        login_page.redirect_to_home()
+        if not home_page.is_user_logged_in():
+            home_page.redirect_to_login()
+            login_page = LoginPage(self.driver)
+            login_page.login('admin', is_valid=True)
+            login_page.redirect_to_home()
         assert home_page.is_element_exists(*HomePageLocators.loading_bar) or home_page.is_element_exists(
             *HomePageLocators.create_org_button)
 
