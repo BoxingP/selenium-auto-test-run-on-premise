@@ -7,11 +7,11 @@ class PageLocators(object):
 
 
 class HomePageLocators(PageLocators):
-    logo_img = (By.XPATH, '(//a[@id="hfLifetechLogoLink"]/*[@id="Layer_1"])[2]')
+    logo_img = (By.XPATH, '//a[@id="hfLifetechLogoLink"]/*[@id="Layer_1"]')
     sign_in_menu = (By.ID, 'sign-in-toggle')
-    sign_in_button = (By.XPATH, '//li[@id="sign-in"]//div[@id="accounts-dd"]/div/div[1]/div/a')
+    sign_in_button = (By.XPATH, '//*[@id="sign-in"]/div/div/div[1]/div/a')
     logged_in_menu = (By.ID, 'logged-in-toggle')
-    sign_out_link = (By.XPATH, '//li[@id="logged-in"]//div[@id="accounts-dd"]/div/div/div[4]/a')
+    sign_out_link = (By.XPATH, '//*[@id="logged-in"]/div/div/div/div[4]/a')
 
 
 class LoginPageLocators(PageLocators):
