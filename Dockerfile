@@ -28,6 +28,8 @@ RUN python3 -m pip install virtualenv
 RUN python3 -m virtualenv --python=/usr/bin/python3 $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 COPY . ./
+COPY ./fonts /usr/share/fonts
+RUN fc-cache -f -v
 RUN pip install -r requirements.txt
 RUN mv ./crontab /etc/cron.d/cron-jobs && sed -i -e 's/\r/\n/g' /etc/cron.d/cron-jobs && chmod 0644 /etc/cron.d/cron-jobs
 RUN chmod +x cron.sh
