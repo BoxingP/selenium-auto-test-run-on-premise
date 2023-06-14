@@ -45,17 +45,61 @@ class TestSitePages:
             else:
                 assert False
 
-    @pytest.mark.parametrize('value', decouple_config('SKUS', cast=lambda v: v.split(',')))
+    @pytest.mark.parametrize('sku_value', decouple_config('ELMS_SKUS', cast=lambda v: v.split(',')))
     @pytest.mark.usefixtures('screenshot_on_failure')
     @pytest.mark.flaky(reruns=reruns, reruns_delay=reruns_delay)
-    @allure.title('Check request quote page opens normally test')
-    @allure.description('This is test to check request quote page opens normally')
-    def test_request_quote_page(self, value):
+    @allure.title('Check elms skus request quote page opens normally test')
+    @allure.description('This is test to check elms skus request quote page opens normally')
+    def test_request_quote_page_for_elms_skus(self, sku_value):
         request_quote_page = RequestQuotePage(self.driver)
         request_quote_page.open_page(
-            url=f"cn/zh/home/technical-resources/request-a-quote.{value}.html??cid={decouple_config('CID')}",
-            wait_element=RequestQuotePageLocators.inquiry_title
+            url=decouple_config('ELMS_URL').format(sku_value=sku_value, cid_value=decouple_config('CID')),
+            wait_element=RequestQuotePageLocators.elms_skus_inquiry_title
         )
-        request_quote_page.wait_request_form_visible()
+        request_quote_page.wait_elms_skus_request_form_visible()
         informed_msg = '我希望收到'
-        assert informed_msg in request_quote_page.find_element(*RequestQuotePageLocators.informed_msg).text
+        assert informed_msg in request_quote_page.find_element(*RequestQuotePageLocators.elms_skus_informed_msg).text
+
+    @pytest.mark.parametrize('sku_value', decouple_config('CATALOG_SKUS', cast=lambda v: v.split(',')))
+    @pytest.mark.usefixtures('screenshot_on_failure')
+    @pytest.mark.flaky(reruns=reruns, reruns_delay=reruns_delay)
+    @allure.title('Check catalog skus request quote page opens normally test')
+    @allure.description('This is test to check catalog skus request quote page opens normally')
+    def test_request_quote_page_for_catalog_skus(self, sku_value):
+        request_quote_page = RequestQuotePage(self.driver)
+        request_quote_page.open_page(
+            url=decouple_config('CATALOG_URL').format(sku_value=sku_value, cid_value=decouple_config('CID')),
+            wait_element=RequestQuotePageLocators.catalog_skus_inquiry_title
+        )
+        request_quote_page.wait_request_form_to_be_visible(RequestQuotePageLocators.catalog_skus_request_quote_form)
+        title_msg = '名'
+        assert title_msg in request_quote_page.find_element(
+            *RequestQuotePageLocators.catalog_skus_first_name_title).text
+
+    @pytest.mark.usefixtures('screenshot_on_failure')
+    @pytest.mark.flaky(reruns=reruns, reruns_delay=reruns_delay)
+    @allure.title('Check bulk and custom product request quote page opens normally test')
+    @allure.description('This is test to check bulk and custom product request quote page opens normally')
+    def test_request_quote_page_for_bulk(self):
+        request_quote_page = RequestQuotePage(self.driver)
+        request_quote_page.open_page(
+            url=decouple_config('BULK_URL').format(cid_value=decouple_config('CID')),
+            wait_element=RequestQuotePageLocators.bulk_inquiry_title
+        )
+        request_quote_page.wait_request_form_to_be_visible(RequestQuotePageLocators.bulk_request_quote_form)
+        title_msg = 'First Name'
+        assert title_msg in request_quote_page.find_element(*RequestQuotePageLocators.bulk_first_name_title).text
+
+    @pytest.mark.usefixtures('screenshot_on_failure')
+    @pytest.mark.flaky(reruns=reruns, reruns_delay=reruns_delay)
+    @allure.title('Check analysis request quote page opens normally test')
+    @allure.description('This is test to check analysis request quote page opens normally')
+    def test_request_quote_page_for_analysis(self):
+        request_quote_page = RequestQuotePage(self.driver)
+        request_quote_page.open_page(
+            url=decouple_config('ANALYSIS_URL').format(cid_value=decouple_config('CID')),
+            wait_element=RequestQuotePageLocators.analysis_inquiry_title
+        )
+        request_quote_page.wait_request_form_to_be_visible(RequestQuotePageLocators.analysis_request_quote_form)
+        title_msg = '姓名'
+        assert title_msg in request_quote_page.find_element(*RequestQuotePageLocators.analysis_name_title).text
