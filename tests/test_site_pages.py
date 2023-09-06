@@ -11,7 +11,7 @@ from pages.request_quote_page import RequestQuotePage
 
 
 @pytest.mark.usefixtures('setup')
-class TestSitePages:
+class TestLoginPage:
     reruns = decouple_config('RERUNS', cast=int)
     reruns_delay = decouple_config('RERUNS_DELAY', cast=int)
 
@@ -31,6 +31,11 @@ class TestSitePages:
         assert profile_msg in home_page.find_element(*HomePageLocators.logged_in_menu).text
         home_page.logout()
 
+
+class TestOrder:
+    reruns = decouple_config('RERUNS', cast=int)
+    reruns_delay = decouple_config('RERUNS_DELAY', cast=int)
+
     @pytest.mark.flaky(reruns=reruns, reruns_delay=reruns_delay)
     @allure.title('Check placed order appears in history test')
     @allure.description('This is test to check whether placed order will appear in order history')
@@ -44,6 +49,12 @@ class TestSitePages:
                 assert e1_order == int(csr_order_details['salesOrderNumber'])
             else:
                 assert False
+
+
+@pytest.mark.usefixtures('setup')
+class TestRequestQuotePage:
+    reruns = decouple_config('RERUNS', cast=int)
+    reruns_delay = decouple_config('RERUNS_DELAY', cast=int)
 
     @pytest.mark.parametrize('sku_value', decouple_config('ELMS_SKUS', cast=lambda v: v.split(',')))
     @pytest.mark.usefixtures('screenshot_on_failure')
