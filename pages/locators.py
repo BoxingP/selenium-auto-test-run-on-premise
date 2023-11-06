@@ -4,6 +4,8 @@ from selenium.webdriver.common.by import By
 class PageLocators(object):
     body = (By.XPATH, '//body')
     html = (By.TAG_NAME, 'html')
+    cookie_setting_box = (By.ID, 'truste-consent-content')
+    accept_cookie_button = (By.ID, 'truste-consent-button')
 
 
 class HomePageLocators(PageLocators):

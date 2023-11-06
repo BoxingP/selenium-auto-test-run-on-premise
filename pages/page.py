@@ -166,3 +166,16 @@ class Page(object):
                 return True
         except FileNotFoundError:
             return False
+
+    @_step
+    @allure.step('Accept cookie')
+    def accept_cookie(self):
+        try:
+            cookie_box = WebDriverWait(self.driver, timeout=self.timeout).until(
+                EC.visibility_of_element_located(self.locator.cookie_setting_box))
+            accept_button = cookie_box.find_element(*self.locator.accept_cookie_button)
+            accept_button.click()
+        except TimeoutException:
+            print('Cookie setting box did not appear')
+        except NoSuchElementException:
+            print('Accept cookie button not found')

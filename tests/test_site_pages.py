@@ -22,6 +22,7 @@ class TestLoginPage:
     def test_login(self):
         home_page = HomePage(self.driver)
         home_page.open_page(url=f"cn/zh/home.html?cid={decouple_config('CID')}", wait_element=HomePageLocators.logo_img)
+        home_page.accept_cookie()
         if not home_page.is_user_logged_in():
             home_page.go_to_login_page()
             login_page = LoginPage(self.driver)
@@ -67,6 +68,7 @@ class TestRequestQuotePage:
             url=decouple_config('ELMS_URL').format(sku_value=sku_value, cid_value=decouple_config('CID')),
             wait_element=RequestQuotePageLocators.elms_skus_inquiry_title
         )
+        request_quote_page.accept_cookie()
         request_quote_page.wait_elms_skus_request_form_visible()
         informed_msg = '我希望收到'
         assert informed_msg in request_quote_page.find_element(*RequestQuotePageLocators.elms_skus_informed_msg).text
